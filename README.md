@@ -6,4 +6,5 @@ atendimento, já que a maioria dos clientes estão acustumados com app de chat.
 
 - [x] Configuar ambiente e estilos de codigo
 - [x] Iniciar servidor
-- [ ] Configurar setup de teste
+- [x] Configurar setup de teste
+- [ ] Configurar ORM para manipulação de dados
