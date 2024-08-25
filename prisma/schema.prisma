@@ -1,0 +1,215 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model addresses {
+  id                  String    @id
+  rua                 String
+  numero              Int
+  bairro              String
+  ponto_de_referencia String
+  cidade              String
+  frete_moto          Float?    @default(5)
+  frete_carro         Float?    @default(10)
+  address_complete    String?
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @default(now())
+  clients             clients[]
+  orders              orders[]
+}
+
+model bolos {
+  id          String     @id
+  peso        Float?
+  price       Float?
+  banner      String     @default("")
+  topper_id   String?    @unique
+  order_id    String?
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now())
+  description String?
+  formato     Formato    @default(REDONDO)
+  cobertura   Cobertura  @default(CHANTILLY)
+  massa       Massa      @default(BRANCA)
+  orders      orders?    @relation(fields: [order_id], references: [id])
+  toppers     toppers?   @relation(fields: [topper_id], references: [id])
+  recheios    recheios[] @relation("BoloToRecheio")
+}
+
+model categories {
+  name       String     @unique
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now())
+  id         String     @id
+  priority   Int        @default(0)
+  products   products[]
+}
+
+model clients {
+  id         String    @id
+  name       String
+  tel        String    @unique
+  address_id String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+  addresses  addresses @relation(fields: [address_id], references: [id])
+  orders     orders[]
+}
+
+model order_products {
+  id         String   @id
+  order_id   String
+  product_id String
+  quantity   Int
+  price      Float
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  total      Float
+  orders     orders   @relation(fields: [order_id], references: [id])
+  products   products @relation(fields: [product_id], references: [id])
+}
+
+model orders {
+  id             String           @id
+  delivery       Boolean          @default(false)
+  total          Float
+  client_id      String
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @default(now())
+  address_id     String?
+  cor_forminhas  String?
+  observations   String?
+  status         Status           @default(RASCUNHO)
+  type_frete     TypeFrete?       @default(FRETE_MOTO)
+  value_frete    Float?
+  date           DateTime
+  hour           String
+  bolos          bolos[]
+  order_products order_products[]
+  addresses      addresses?       @relation(fields: [address_id], references: [id])
+  clients        clients          @relation(fields: [client_id], references: [id])
+  payments       payments[]
+}
+
+model payments {
+  id         String      @id
+  order_id   String
+  type       PaymentType @default(DINHEIRO)
+  value      Float
+  created_at DateTime    @default(now())
+  updated_at DateTime    @default(now())
+  date       DateTime?
+  paid       Boolean     @default(false)
+  orders     orders      @relation(fields: [order_id], references: [id])
+}
+
+model products {
+  id             String           @id
+  name           String
+  price          Float
+  min_quantity   Int
+  banner         String           @default("")
+  created_at     DateTime         @default(now())
+  updated_at     DateTime         @default(now())
+  category_name  String
+  size           Size             @default(UNIT)
+  order_products order_products[]
+  categories     categories       @relation(fields: [category_name], references: [name])
+}
+
+model recheios {
+  id            String   @id
+  name          String
+  price         Float
+  is_pesado     Boolean  @default(false)
+  to_bento_cake Boolean  @default(true)
+  banner        String   @default("")
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now())
+  price_fixed   Boolean  @default(false)
+  bolos         bolos[]  @relation("BoloToRecheio")
+}
+
+model toppers {
+  id          String   @id
+  tema        String
+  price       Float    @default(15)
+  banner      String   @default("")
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  description String?
+  idade       Int?
+  name        String?
+  recebido    Boolean  @default(false)
+  bolos       bolos?
+}
+
+model users {
+  id         String   @id
+  name       String
+  tel        String   @unique
+  password   String
+  role       Role     @default(USER)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+enum Cobertura {
+  CHANTILLY
+  NATA
+  CLARA_QUEIMADA
+  AVELA_BATIDO
+  KIT_KAT
+}
+
+enum Formato {
+  REDONDO
+  QUADRADO
+}
+
+enum Massa {
+  BRANCA
+  CHOCOLATE
+  MASSA_MESCLADA
+}
+
+enum PaymentType {
+  DINHEIRO
+  PIX
+  CARTAO_DE_CREDITO
+  CARTAO_DE_DEBITO
+  DUPLICATA
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Size {
+  PP
+  P
+  M
+  G
+  GG
+  UNIT
+  NOT
+}
+
+enum Status {
+  RASCUNHO
+  ANOTADO
+  EM_PRODUCAO
+  ENTREGUE
+  CANCELADO
+}
+
+enum TypeFrete {
+  FRETE_MOTO
+  FRETE_CARRO
+}
