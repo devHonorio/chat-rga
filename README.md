@@ -5,4 +5,5 @@ vai ser integrado ao ecosistema da RGA Doces e Salgados como uma segundo canal d
 atendimento, já que a maioria dos clientes estão acustumados com app de chat.
 
 - [x] Configuar ambiente e estilos de codigo
-- [ ]
+- [x] Iniciar servidor
+- [ ] Configurar setup de teste
