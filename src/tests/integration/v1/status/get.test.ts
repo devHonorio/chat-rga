@@ -64,9 +64,26 @@ async function seedDB() {
 
 beforeAll(seedDB);
 
+interface ResponseBoryProps {
+  update_at: string;
+  dependencies: {
+    database: {
+      version: number;
+      max_connections: number;
+      opened_connections: number;
+    };
+  };
+}
+
 test("GET /ap1/v1/status return 200", async () => {
-  console.log(process.env.DATABASE_URL);
   const response = await fetch("http://localhost:3000/api/v1/status");
 
   expect(response.status).toBe(200);
+
+  const responseBory: ResponseBoryProps = await response.json();
+
+  expect(responseBory).toHaveProperty("update_at");
+  expect(responseBory.dependencies.database.version).toBe(16.1);
+  expect(responseBory.dependencies.database.max_connections).toBe(100);
+  expect(responseBory.dependencies.database.opened_connections).toBe(1);
 });
