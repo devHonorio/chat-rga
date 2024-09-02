@@ -10,4 +10,7 @@ atendimento, já que a maioria dos clientes estão acustumados com app de chat.
 - [x] Configurar ORM para manipulação de dados
 - [x] Configurar variaveis de ambiente para ORM e testes
 - [x] Configurar state do banco de dados
-- [ ] Completar endpoint `/api/v1/status`
+- [x] Completar endpoint `/api/v1/status`
+- [x] Criar tela de chat
+- [x] Criar components
+- [ ] Definir fluxo de respostas

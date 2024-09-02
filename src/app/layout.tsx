@@ -1,3 +1,5 @@
+import "./globals.css";
+
 interface RootLayoutProps {
   children: React.ReactNode;
 }
@@ -5,7 +7,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="pt-br">
-      <body>{children}</body>
+      <body className="bg-black text-white">{children}</body>
     </html>
   );
 }
